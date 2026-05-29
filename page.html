@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Zenova CBT — English · Physics · Biology · Chemistry</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0d1b3e;--navy2:#162554;--navy3:#1e3a8a;
+  --blue:#2563eb;--bsoft:#3b82f6;--bpale:#dbeafe;
+  --acc:#60a5fa;--white:#fff;--off:#f8faff;
+  --g50:#f1f5f9;--g100:#e2e8f0;--g300:#94a3b8;--g500:#64748b;--g700:#334155;
+  --green:#10b981;--amber:#f59e0b;--red:#ef4444;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--navy);margin:0}
+
+/* ══ PAGE SYSTEM ══ */
+.page{display:none;min-height:100vh}
+.page.show{display:block}
+
+/* ══ SPLASH PAGE ══ */
+#pg-splash{
+  background:linear-gradient(145deg,var(--navy) 0%,var(--navy2) 60%,#1a2f6b 100%);
+  display:none;min-height:100vh;padding:20px;
+  justify-content:center;align-items:flex-start;
+}
+#pg-splash.show{display:flex}
+.scard{
+  background:var(--white);border-radius:20px;width:100%;max-width:580px;
+  padding:36px 40px;margin:auto;
+  box-shadow:0 10px 40px rgba(13,27,62,.25);
+}
+.slogo{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.slogo img{width:40px;height:40px;object-fit:contain;border-radius:8px}
+.slogo-txt{font-size:22px;font-weight:700;color:var(--navy)}
+.slogo-txt span{color:var(--blue)}
+.sbadge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--bpale);color:var(--blue);font-size:12px;font-weight:600;
+  padding:4px 12px;border-radius:100px;margin-bottom:14px;
+}
+.stitle{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:5px;line-height:1.3}
+.ssub{font-size:13px;color:var(--g500);margin-bottom:22px}
+.smeta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px}
+.smeta-item{background:var(--off);border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:10px}
+.smeta-icon{font-size:16px}
+.smeta-lbl{font-size:10px;color:var(--g500);font-weight:500}
+.smeta-val{font-size:12px;color:var(--navy);font-weight:700}
+.sdiv{border:none;border-top:1px solid var(--g100);margin:0 0 20px}
+.sinstr{margin-bottom:26px}
+.sinstr h3{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.sinstr ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.sinstr li{font-size:13px;color:var(--g700);display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.sinstr li::before{content:'';flex-shrink:0;margin-top:6px;width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.sbtn{
+  display:block;width:100%;padding:15px;
+  background:var(--navy);color:var(--white);
+  border:none;border-radius:12px;font-size:15px;font-weight:700;
+  font-family:'DM Sans',sans-serif;cursor:pointer;text-align:center;
+  text-decoration:none;letter-spacing:.3px;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.sbtn:active{background:var(--navy3)}
+
+/* ══ EXAM PAGE ══ */
+#pg-exam{display:none;flex-direction:column;min-height:100vh}
+#pg-exam.show{display:flex}
+
+/* nav */
+nav{height:60px;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(13,27,62,.3)}
+.nlogo{display:flex;align-items:center;gap:8px}
+.nlogo img{width:30px;height:30px;object-fit:contain;border-radius:6px}
+.nlogo-txt{font-size:17px;font-weight:700;color:var(--white)}
+.nlogo-txt span{color:var(--acc)}
+.ntimer{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  border-radius:8px;padding:6px 12px;
+  font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--white);letter-spacing:1px;
+}
+.ntimer.warn{color:var(--amber)}
+.ntimer.danger{color:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* exam body */
+.exam-body{flex:1;display:flex;overflow:hidden}
+.qcol{flex:1;padding:16px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* subject tabs */
+.stabs{display:flex;gap:6px;flex-wrap:wrap}
+.stab{
+  padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1.5px solid var(--g100);color:var(--g500);background:var(--white);
+  font-family:'DM Sans',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.stab.active{background:var(--navy);color:var(--white);border-color:var(--navy)}
+
+/* question card */
+.qcard{background:var(--white);border-radius:12px;padding:22px;box-shadow:0 2px 12px rgba(13,27,62,.08);border:1px solid var(--g100)}
+.qmeta{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.qbadge{background:var(--bpale);color:var(--blue);font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px}
+.qnum{font-size:12px;color:var(--g500)}
+.qtxt{font-size:15px;font-weight:500;color:var(--navy);line-height:1.6;margin-bottom:20px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{
+  display:flex;align-items:center;gap:12px;padding:13px 16px;
+  border-radius:10px;border:1.5px solid var(--g100);background:var(--white);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  -webkit-user-select:none;user-select:none;
+}
+.opt.sel{border-color:var(--navy);background:var(--bpale)}
+.oletter{
+  width:30px;height:30px;border-radius:7px;flex-shrink:0;
+  background:var(--g50);color:var(--navy);font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.opt.sel .oletter{background:var(--navy);color:var(--white)}
+.otxt{font-size:14px;color:var(--navy);line-height:1.4}
+
+/* nav buttons */
+.qactions{display:flex;gap:10px;padding-bottom:8px}
+.abtn{
+  padding:11px 20px;border-radius:10px;font-size:13px;font-weight:700;
+  font-family:'DM Sans',sans-serif;cursor:pointer;border:none;
+  display:flex;align-items:center;gap:6px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.aprev{background:var(--white);color:var(--navy);border:1.5px solid var(--g100)}
+.anext{background:var(--navy);color:var(--white);box-shadow:0 3px 10px rgba(13,27,62,.2)}
+.asubmit{background:var(--red);color:var(--white);margin-left:auto;box-shadow:0 3px 10px rgba(239,68,68,.25)}
+
+/* sidebar */
+.sidebar{width:230px;background:var(--white);border-left:1px solid var(--g100);padding:18px 14px;display:flex;flex-direction:column;gap:18px;overflow-y:auto;flex-shrink:0}
+.sbsec h3{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--g500);margin-bottom:10px}
+.pbar-bg{background:var(--g100);border-radius:100px;height:6px;overflow:hidden}
+.pbar{height:100%;background:linear-gradient(90deg,var(--navy),var(--bsoft));border-radius:100px;transition:width .4s}
+.ptxt{font-size:11px;color:var(--g500);margin-top:5px;font-weight:500}
+.legend{display:flex;flex-direction:column;gap:7px}
+.litem{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--g700)}
+.ldot{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.ldot.ans{background:var(--navy);color:var(--white)}
+.ldot.cur{background:var(--bsoft);color:var(--white)}
+.ldot.unans{background:var(--g100);color:var(--g500);border:1px solid var(--g100)}
+.pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.pnum{
+  aspect-ratio:1;border-radius:5px;font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;
+  font-family:'DM Sans',sans-serif;-webkit-tap-highlight-color:transparent;
+}
+.pnum.unans{background:var(--g100);color:var(--g500)}
+.pnum.ans{background:var(--navy);color:var(--white)}
+.pnum.cur{background:var(--bsoft);color:var(--white);box-shadow:0 0 0 2px var(--bpale)}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(13,27,62,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
+.overlay.open{display:flex}
+.mbox{background:var(--white);border-radius:16px;padding:32px;max-width:380px;width:100%;box-shadow:0 10px 40px rgba(13,27,62,.2)}
+.micon{font-size:34px;margin-bottom:12px}
+.mtitle{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.mmsg{font-size:13px;color:var(--g500);line-height:1.6;margin-bottom:20px}
+.mstats{display:flex;gap:8px;margin-bottom:20px}
+.mstat{flex:1;background:var(--off);border-radius:8px;padding:12px;text-align:center}
+.mstat .v{font-size:20px;font-weight:800;color:var(--navy)}
+.mstat .l{font-size:10px;color:var(--g500);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.macts{display:flex;gap:8px}
+.mcancel{flex:1;padding:11px;background:var(--white);border:1.5px solid var(--g100);color:var(--navy);border-radius:8px;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer}
+.mconfirm{flex:1;padding:11px;background:var(--red);color:var(--white);border:none;border-radius:8px;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer}
+
+/* mobile */
+@media(max-width:640px){
+  .sidebar{display:none}
+  .scard{padding:24px 18px}
+  .stitle{font-size:17px}
+  .ssub{font-size:12px;margin-bottom:16px}
+  .smeta{gap:6px;margin-bottom:16px}
+  .smeta-item{padding:9px 10px}
+  .sinstr{margin-bottom:18px}
+  .sinstr li{font-size:12px}
+  nav{height:54px}
+  .ntimer{font-size:16px;padding:5px 10px}
+  .qcol{padding:12px}
+  .qcard{padding:16px}
+  .qtxt{font-size:14px}
+  .opt{padding:11px 13px}
+  .otxt{font-size:13px}
+  .abtn{padding:10px 14px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SPLASH PAGE ══ -->
+<div id="pg-splash">
+  <div class="scard">
+    <div class="slogo">
+      <img src="1.png" alt="Logo" onerror="this.style.display='none'"/>
+      <div class="slogo-txt">Zen<span>ova</span></div>
+    </div>
+    <div class="sbadge">🏆 Official CBT Platform</div>
+    <div class="stitle">Zenova Mega CBT Competition 2027</div>
+    <div class="ssub">Read these instructions carefully before you begin.</div>
+    <div class="smeta">
+      <div class="smeta-item"><div class="smeta-icon">📅</div><div><div class="smeta-lbl">Date</div><div class="smeta-val">April 10, 2027</div></div></div>
+      <div class="smeta-item"><div class="smeta-icon">⏰</div><div><div class="smeta-lbl">Duration</div><div class="smeta-val">2 Hours</div></div></div>
+      <div class="smeta-item"><div class="smeta-icon">📚</div><div><div class="smeta-lbl">Subjects</div><div class="smeta-val">4 Subjects</div></div></div>
+      <div class="smeta-item"><div class="smeta-icon">📝</div><div><div class="smeta-lbl">Questions</div><div class="smeta-val">150 Total</div></div></div>
+    </div>
+    <hr class="sdiv"/>
+    <div class="sinstr">
+      <h3>📌 Exam Instructions</h3>
+      <ul>
+        <li>English Language is compulsory for all candidates.</li>
+        <li>Do not refresh the page during the examination.</li>
+        <li>Ensure your internet connection is stable.</li>
+        <li>Each question carries equal marks. No negative marking.</li>
+        <li>Select the best answer for each question.</li>
+        <li>Use the question palette to navigate freely between questions.</li>
+        <li>Your exam will automatically submit when the timer ends.</li>
+      </ul>
+    </div>
+    <button class="sbtn" id="begin-btn" onclick="beginExam()">
+      ▶&nbsp;&nbsp;Begin Examination
+    </button>
+  </div>
+</div>
+
+<!-- ══ EXAM PAGE ══ -->
+<div id="pg-exam">
+  <nav>
+    <div class="nlogo">
+      <img src="1.png" alt="Logo" onerror="this.style.display='none'"/>
+      <div class="nlogo-txt">Zen<span>ova</span></div>
+    </div>
+    <div class="ntimer" id="timer">02:00:00</div>
+  </nav>
+  <div class="exam-body">
+    <div class="qcol">
+      <div class="stabs" id="stabs">
+        <button class="stab active" onclick="switchSubject(0)">English Language</button>
+            <button class="stab" onclick="switchSubject(1)">Physics</button>
+            <button class="stab" onclick="switchSubject(2)">Biology</button>
+            <button class="stab" onclick="switchSubject(3)">Chemistry</button>
+      </div>
+      <div class="qcard">
+        <div class="qmeta">
+          <div class="qbadge" id="qbadge">Subject</div>
+          <div class="qnum" id="qnum">Question 1</div>
+        </div>
+        <div class="qtxt" id="qtxt">Loading...</div>
+        <div class="opts" id="opts"></div>
+      </div>
+      <div class="qactions">
+        <button class="abtn aprev" onclick="prevQ()">&#8592; Prev</button>
+        <button class="abtn anext" onclick="nextQ()">Next &#8594;</button>
+        <button class="abtn asubmit" onclick="openModal()">Submit ✓</button>
+      </div>
+    </div>
+    <div class="sidebar">
+      <div class="sbsec">
+        <h3>Progress</h3>
+        <div class="pbar-bg"><div class="pbar" id="pbar" style="width:0%"></div></div>
+        <div class="ptxt" id="ptxt">0 of 150 answered</div>
+      </div>
+      <div class="sbsec">
+        <h3>Legend</h3>
+        <div class="legend">
+          <div class="litem"><div class="ldot ans">✓</div>Answered</div>
+          <div class="litem"><div class="ldot cur">→</div>Current</div>
+          <div class="litem"><div class="ldot unans"></div>Unanswered</div>
+        </div>
+      </div>
+      <div class="sbsec" style="flex:1">
+        <h3>Question Palette</h3>
+        <div class="pgrid" id="pgrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL ══ -->
+<div class="overlay" id="modal">
+  <div class="mbox">
+    <div class="micon">⚠️</div>
+    <div class="mtitle">Submit Examination?</div>
+    <div class="mmsg">You are about to submit. Please confirm your decision.</div>
+    <div class="mstats">
+      <div class="mstat"><div class="v" id="m-ans">0</div><div class="l">Answered</div></div>
+      <div class="mstat"><div class="v" id="m-unans">150</div><div class="l">Unanswered</div></div>
+      <div class="mstat"><div class="v" id="m-total">150</div><div class="l">Total</div></div>
+    </div>
+    <div class="macts">
+      <button class="mcancel" onclick="closeModal()">Review</button>
+      <button class="mconfirm" onclick="submitExam()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══ DATA ══ */
+const SUBJECTS = [
+  { name: "English Language", count: 40 },
+  { name: "Physics", count: 35 },
+  { name: "Biology", count: 40 },
+  { name: "Chemistry", count: 35 }
+];
+
+const QUESTIONS_DATA = {
+  "English Language": [
+    { q:"Which of the following sentences is grammatically correct?", opts:["He don't like coffee.","She doesn't likes coffee.","They doesn't like coffee.","We don't like coffee."], ans:3 },
+    { q:"Choose the word that is closest in meaning to 'BENEVOLENT'.", opts:["Cruel","Kind","Indifferent","Hostile"], ans:1 },
+    { q:"Identify the figure of speech in: 'The wind howled through the trees at night.'", opts:["Metaphor","Simile","Personification","Hyperbole"], ans:2 },
+    { q:"Choose the correct spelling.", opts:["Accomodate","Accommodate","Acommodate","Acomodate"], ans:1 },
+    { q:"What is the capital city of Nigeria?", opts:["Kano","Lagos","Abuja","Ibadan"], ans:2 },
+    { q:"Select the antonym of 'VERBOSE'.", opts:["Talkative","Wordy","Concise","Loquacious"], ans:2 },
+    { q:"Which sentence uses a semicolon correctly?", opts:["I went to the store; and bought milk.","She loves reading; she owns 500 books.","He ran fast; because he was late.","They played; in the garden all day."], ans:1 },
+    { q:"The plural of 'criterion' is:", opts:["Criterions","Criteria","Criterias","Criteriae"], ans:1 },
+    { q:"Choose the correct form: 'Neither the boys nor the teacher ___ present.'", opts:["were","are","is","have been"], ans:2 },
+    { q:"Identify the indirect object: 'She gave her brother a gift.'", opts:["She","her brother","a gift","gave"], ans:1 },
+  ],
+  "Physics": [
+    { q:"What is the SI unit of electric potential?", opts:["Ampere","Ohm","Volt","Watt"], ans:2 },
+    { q:"A body of mass 5 kg is acted upon by a force of 20 N. Find its acceleration.", opts:["2 m/s²","4 m/s²","100 m/s²","0.25 m/s²"], ans:1 },
+    { q:"Which of these is a scalar quantity?", opts:["Velocity","Displacement","Temperature","Force"], ans:2 },
+    { q:"What is the speed of light in a vacuum?", opts:["3×10⁸ m/s","3×10⁶ m/s","3×10¹⁰ m/s","3×10⁴ m/s"], ans:0 },
+    { q:"The phenomenon of light bending when passing from one medium to another is called:", opts:["Reflection","Refraction","Diffraction","Polarisation"], ans:1 },
+    { q:"Ohm's law states that V = IR. If V = 12V and R = 4Ω, find I.", opts:["3 A","48 A","0.33 A","8 A"], ans:0 },
+    { q:"Which particle has no charge?", opts:["Proton","Neutron","Electron","Alpha particle"], ans:1 },
+    { q:"The unit of frequency is:", opts:["Metre","Newton","Hertz","Joule"], ans:2 },
+    { q:"Work done = Force × Distance. What is the work done if F = 50 N and d = 10 m?", opts:["5 J","500 J","0.5 J","5000 J"], ans:1 },
+    { q:"Which law states that the pressure of a gas is inversely proportional to its volume at constant temperature?", opts:["Charles' Law","Avogadro's Law","Boyle's Law","Newton's Law"], ans:2 },
+  ],
+  "Biology": [
+    { q:"What is the powerhouse of the cell?", opts:["Nucleus","Ribosome","Mitochondria","Chloroplast"], ans:2 },
+    { q:"The process of cell division producing two identical daughter cells is:", opts:["Meiosis","Binary fission","Mitosis","Budding"], ans:2 },
+    { q:"Which blood group is the universal donor?", opts:["AB","A","B","O"], ans:3 },
+    { q:"The basic unit of life is:", opts:["Tissue","Organ","Cell","Organism"], ans:2 },
+    { q:"Which of the following is NOT a function of the liver?", opts:["Detoxification","Bile production","Insulin production","Protein synthesis"], ans:2 },
+    { q:"Photosynthesis occurs in which part of the plant cell?", opts:["Mitochondria","Nucleus","Chloroplast","Cell wall"], ans:2 },
+    { q:"What is the normal human body temperature in Celsius?", opts:["35°C","36°C","37°C","38°C"], ans:2 },
+    { q:"The study of fungi is called:", opts:["Botany","Mycology","Zoology","Entomology"], ans:1 },
+    { q:"Which vitamin is synthesised by the skin upon exposure to sunlight?", opts:["Vitamin A","Vitamin B","Vitamin C","Vitamin D"], ans:3 },
+    { q:"DNA stands for:", opts:["Deoxyribonucleic Acid","Diribonucleic Acid","Deoxyribose Acid","Dinuclear Acid"], ans:0 },
+    { q:"Which of the following is an example of an invertebrate?", opts:["Frog","Earthworm","Lizard","Pigeon"], ans:1 },
+    { q:"The process by which water is lost through the leaves of a plant is called:", opts:["Respiration","Transpiration","Photosynthesis","Osmosis"], ans:1 },
+    { q:"Which part of the brain controls balance and coordination?", opts:["Cerebrum","Medulla oblongata","Cerebellum","Thalamus"], ans:2 },
+    { q:"The hormone responsible for regulating blood sugar levels is:", opts:["Adrenaline","Thyroxine","Insulin","Oestrogen"], ans:2 },
+    { q:"Which of the following is a characteristic of living things?", opts:["Combustion","Fossilisation","Irritability","Crystallisation"], ans:2 },
+    { q:"Osmosis is the movement of water from a region of:", opts:["High solute concentration to low","Low water potential to high","High water potential to low","Equal concentration"], ans:2 },
+    { q:"The male reproductive organ in flowering plants is the:", opts:["Pistil","Stigma","Stamen","Ovary"], ans:2 },
+    { q:"Which blood cells are responsible for fighting infections?", opts:["Red blood cells","Platelets","White blood cells","Plasma"], ans:2 },
+    { q:"The scientific name of humans is:", opts:["Homo erectus","Homo sapiens","Homo habilis","Australopithecus"], ans:1 },
+    { q:"Which organ is responsible for filtering blood in the human body?", opts:["Liver","Lungs","Kidney","Heart"], ans:2 },
+  ],
+  "Chemistry": [
+    { q:"What is the atomic number of carbon?", opts:["6","12","8","14"], ans:0 },
+    { q:"Which gas is produced when dilute HCl reacts with zinc?", opts:["Oxygen","Carbon dioxide","Hydrogen","Chlorine"], ans:2 },
+    { q:"What is the pH of a neutral solution at 25°C?", opts:["0","7","14","10"], ans:1 },
+    { q:"The process by which plants make food using sunlight is called:", opts:["Respiration","Photosynthesis","Transpiration","Germination"], ans:1 },
+    { q:"Which of the following is a noble gas?", opts:["Fluorine","Nitrogen","Argon","Chlorine"], ans:2 },
+    { q:"What is the chemical formula of water?", opts:["H₂O₂","HO₂","H₂O","H₃O"], ans:2 },
+    { q:"The number of moles in 18 g of water is: (Molar mass of H₂O = 18 g/mol)", opts:["0.5 mol","2 mol","1 mol","18 mol"], ans:2 },
+    { q:"In a redox reaction, the species that loses electrons is:", opts:["Reduced","Oxidised","Neutral","Precipitated"], ans:1 },
+    { q:"Which of the following is an example of a covalent compound?", opts:["NaCl","KBr","CH₄","CaCl₂"], ans:2 },
+    { q:"The periodic table was arranged by:", opts:["John Dalton","Dmitri Mendeleev","Antoine Lavoisier","Robert Boyle"], ans:1 },
+  ],
+};
+
+
+/* ══ STATE ══ */
+const exam = buildExam();
+const answers = new Array(exam.length).fill(-1);
+let current = 0;
+let activeSubj = 0;
+let timerSecs = 7200;
+let timerInterval = null;
+
+/* ══ BUILD EXAM ══ */
+function buildExam() {
+  let out = [];
+  SUBJECTS.forEach(s => {
+    const pool = QUESTIONS_DATA[s.name] || [];
+    for (let i = 0; i < s.count; i++) {
+      if (i < pool.length) {
+        out.push({ subject: s.name, ...pool[i] });
+      } else {
+        out.push({
+          subject: s.name,
+          q: s.name + ' — Question ' + (i+1) + ': Sample question.',
+          opts: ['Option A','Option B','Option C','Option D'],
+          ans: 0
+        });
+      }
+    }
+  });
+  return out;
+}
+
+/* ══ HELPERS ══ */
+function subjOffset(i) {
+  let o = 0;
+  for (let s = 0; s < i; s++) o += SUBJECTS[s].count;
+  return o;
+}
+function subjOf(idx) {
+  let o = 0;
+  for (let s = 0; s < SUBJECTS.length; s++) {
+    o += SUBJECTS[s].count;
+    if (idx < o) return s;
+  }
+  return SUBJECTS.length - 1;
+}
+
+/* ══ RENDER ══ */
+function render() {
+  const q = exam[current];
+  const si = subjOf(current);
+  const local = current - subjOffset(si) + 1;
+  document.getElementById('qbadge').textContent = q.subject;
+  document.getElementById('qnum').textContent = 'Q' + local + ' of ' + SUBJECTS[si].count;
+  document.getElementById('qtxt').textContent = local + '. ' + q.q;
+  const labels = ['A','B','C','D'];
+  const ol = document.getElementById('opts');
+  ol.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const d = document.createElement('div');
+    d.className = 'opt' + (answers[current] === i ? ' sel' : '');
+    d.onclick = () => pick(i);
+    d.innerHTML = '<div class="oletter">' + labels[i] + '</div><div class="otxt">' + opt + '</div>';
+    ol.appendChild(d);
+  });
+  document.querySelectorAll('.stab').forEach((t,i) => {
+    t.className = 'stab' + (i === si ? ' active' : '');
+  });
+  activeSubj = si;
+  renderPalette();
+  updateProgress();
+}
+
+function renderPalette() {
+  const pg = document.getElementById('pgrid');
+  pg.innerHTML = '';
+  const off = subjOffset(activeSubj);
+  const cnt = SUBJECTS[activeSubj].count;
+  for (let i = 0; i < cnt; i++) {
+    const abs = off + i;
+    const b = document.createElement('button');
+    b.className = 'pnum ' + (abs === current ? 'cur' : answers[abs] !== -1 ? 'ans' : 'unans');
+    b.textContent = i + 1;
+    b.onclick = () => { current = abs; render(); };
+    pg.appendChild(b);
+  }
+}
+
+function updateProgress() {
+  const done = answers.filter(a => a !== -1).length;
+  const pct = Math.round(done / exam.length * 100);
+  document.getElementById('pbar').style.width = pct + '%';
+  document.getElementById('ptxt').textContent = done + ' of ' + exam.length + ' answered';
+}
+
+/* ══ ACTIONS ══ */
+function pick(i) { answers[current] = i; render(); }
+function nextQ() { if (current < exam.length-1) { current++; activeSubj = subjOf(current); render(); } }
+function prevQ() { if (current > 0) { current--; activeSubj = subjOf(current); render(); } }
+function switchSubject(i) { activeSubj = i; current = subjOffset(i); render(); }
+
+/* ══ TIMER ══ */
+function startTimer() {
+  timerInterval = setInterval(() => {
+    timerSecs--;
+    const h = String(Math.floor(timerSecs/3600)).padStart(2,'0');
+    const m = String(Math.floor((timerSecs%3600)/60)).padStart(2,'0');
+    const s = String(timerSecs%60).padStart(2,'0');
+    const el = document.getElementById('timer');
+    el.textContent = h+':'+m+':'+s;
+    el.className = 'ntimer' + (timerSecs<=300?' danger':timerSecs<=600?' warn':'');
+    if (timerSecs<=0) { clearInterval(timerInterval); submitExam(); }
+  }, 1000);
+}
+
+/* ══ MODAL ══ */
+function openModal() {
+  const done = answers.filter(a=>a!==-1).length;
+  document.getElementById('m-ans').textContent = done;
+  document.getElementById('m-unans').textContent = exam.length - done;
+  document.getElementById('m-total').textContent = exam.length;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+/* ══ SUBMIT ══ */
+function submitExam() {
+  clearInterval(timerInterval);
+  closeModal();
+  const colors = ['#2563eb', '#8b5cf6', '#f59e0b', '#10b981'];
+  const subjectsResult = SUBJECTS.map((s,si) => {
+    const off = subjOffset(si);
+    let correct=0,wrong=0,skipped=0;
+    for (let i=0;i<s.count;i++) {
+      const a = answers[off+i];
+      if (a===-1) skipped++;
+      else if (a===exam[off+i].ans) correct++;
+      else wrong++;
+    }
+    return {name:s.name,total:s.count,correct,wrong,skipped,color:colors[si]||'#2563eb'};
+  });
+  sessionStorage.setItem('zenovaResult', JSON.stringify({
+    examTitle:'Zenova Mega CBT Competition 2027',
+    examDate: new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'}),
+    totalQuestions: exam.length,
+    timeAllowedSecs: 7200,
+    timeUsedSecs: 7200 - timerSecs,
+    subjects: subjectsResult
+  }));
+  window.location.href = 'zenova-result.html';
+}
+
+/* ══ PAGE ROUTING — the bulletproof mobile approach ══ */
+function showSplash() {
+  document.getElementById('pg-splash').classList.add('show');
+  document.getElementById('pg-exam').classList.remove('show');
+}
+function showExam() {
+  document.getElementById('pg-splash').classList.remove('show');
+  document.getElementById('pg-exam').classList.add('show');
+  render();
+  if (!timerInterval) startTimer();
+}
+function beginExam() {
+  // Store flag so refresh doesn't bring back splash
+  try { sessionStorage.setItem('zenovaStarted','1'); } catch(e) {}
+  showExam();
+}
+
+// On load: decide which page to show
+window.addEventListener('load', function() {
+  try {
+    if (sessionStorage.getItem('zenovaStarted') === '1') {
+      showExam();
+    } else {
+      showSplash();
+    }
+  } catch(e) {
+    showSplash();
+  }
+});
+</script>
+</body>
+</html>
